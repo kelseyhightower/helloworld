@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"log"
 
@@ -39,6 +40,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(response.Message)
+		fmt.Println(response.Message)
 	}
 }

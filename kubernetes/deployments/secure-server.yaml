@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "secure-server"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "secure-server"
+        track: "stable"
+    spec:
+      containers:
+        - name: "secure-server"
+          image: "kelseyhightower/secure-server:2.0.0"
+          volumeMounts:
+            - name: "secure-server"
+              mountPath: "/etc/helloworld"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10001
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 10001
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+      volumes:
+        - name: "secure-server"
+          secret:
+            secretName: "secure-server"

@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -18,7 +19,7 @@ import (
 func main() {
 	var (
 		caCert = flag.String("ca", "/etc/helloworld/ca.pem", "Trusted CA certificate.")
-		server = flag.String("server", "127.0.0.1:7900", "Server address.")
+		server = flag.String("server", "127.0.0.1:10000", "Server address.")
 		name   = flag.String("name", "", "Username to use.")
 		token  = flag.String("token", "/etc/helloworld/token", "JWT token.")
 	)
@@ -56,5 +57,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println(response.Message)
+	fmt.Println(response.Message)
 }

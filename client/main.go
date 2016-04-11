@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	pb "github.com/kelseyhightower/helloworld/helloworld"
@@ -11,7 +12,7 @@ import (
 
 func main() {
 	var (
-		server = flag.String("server", "127.0.0.1:7800", "Server address.")
+		server = flag.String("server", "127.0.0.1:10000", "Server address.")
 		name   = flag.String("name", "", "Username to use.")
 	)
 	flag.Parse()
@@ -29,5 +30,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println(response.Message)
+	fmt.Println(response.Message)
 }

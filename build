@@ -2,7 +2,3 @@
 mkdir -p bin
 go build -a --ldflags '-extldflags "-static"' -tags netgo -installsuffix netgo -o bin/server ./server
 go build -a --ldflags '-extldflags "-static"' -tags netgo -installsuffix netgo -o bin/client ./client
-go build -a --ldflags '-extldflags "-static"' -tags netgo -installsuffix netgo -o bin/streaming-server ./streaming-server
-go build -a --ldflags '-extldflags "-static"' -tags netgo -installsuffix netgo -o bin/streaming-client ./streaming-client
-go build -a --ldflags '-extldflags "-static"' -tags netgo -installsuffix netgo -o bin/secure-server ./secure-server
-go build -a --ldflags '-extldflags "-static"' -tags netgo -installsuffix netgo -o bin/secure-client ./secure-client

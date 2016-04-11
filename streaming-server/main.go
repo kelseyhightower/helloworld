@@ -13,13 +13,13 @@ import (
 
 type server struct{}
 
-func (s *server) SayHello(ctx context.Context, in *pb.Request) (*pb.Response, error) {
-	return &pb.Response{Message: "Hello " + in.Name}, nil
+func (s *server) SayHello(ctx context.Context, request *pb.Request) (*pb.Response, error) {
+	return &pb.Response{Message: "Hello " + request.Name}, nil
 }
 
-func (s *server) SayHelloStream(in *pb.Request, stream pb.Greeter_SayHelloStreamServer) error {
+func (s *server) SayHelloStream(request *pb.Request, stream pb.Greeter_SayHelloStreamServer) error {
 	for {
-		err := stream.Send(&pb.Response{Message: "Hello " + in.Name})
+		err := stream.Send(&pb.Response{Message: "Hello " + request.Name})
 		if err != nil {
 			log.Println(err)
 			return err

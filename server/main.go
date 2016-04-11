@@ -11,12 +11,12 @@ import (
 
 type server struct{}
 
-func (s *server) SayHello(ctx context.Context, in *pb.Request) (*pb.Response, error) {
-	return &pb.Response{Message: "Hello " + in.Name}, nil
+func (s *server) SayHello(ctx context.Context, request *pb.Request) (*pb.Response, error) {
+	return &pb.Response{Message: "Hello " + request.Name}, nil
 }
 
 func main() {
-	ln, err := net.Listen("tcp", ":7800")
+	ln, err := net.Listen("tcp", ":10000")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

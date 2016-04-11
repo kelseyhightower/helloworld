@@ -8,11 +8,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"net/http"
+	"time"
 
 	pb "github.com/kelseyhightower/helloworld/helloworld"
 
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/net/context"
+	"golang.org/x/net/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -36,23 +39,39 @@ func NewServer(rsaPublicKey string) (*server, error) {
 	return &server{publickey}, nil
 }
 
-func (s *server) SayHello(ctx context.Context, in *pb.Request) (*pb.Response, error) {
+func (s *server) SayHello(ctx context.Context, request *pb.Request) (*pb.Response, error) {
 	token, err := validateTokenFromContext(ctx, s.jwtPublicKey)
 	if err != nil {
 		log.Println(err)
 		return &pb.Response{}, grpc.Errorf(codes.Unauthenticated, "valid token required.")
 	}
 
-	response := &pb.Response{
-		Message: fmt.Sprintf("Hello %s (%s)", in.Name, token.Claims["email"]),
+	return &pb.Response{
+		Message: fmt.Sprintf("Hello %s (%s)", request.Name, token.Claims["email"]),
+	}, nil
+}
+
+func (s *server) SayHelloStream(request *pb.Request, stream pb.Greeter_SayHelloStreamServer) error {
+	_, err := validateTokenFromContext(stream.Context(), s.jwtPublicKey)
+	if err != nil {
+		log.Println(err)
+		return grpc.Errorf(codes.Unauthenticated, "valid token required.")
 	}
 
-	return response, nil
+	for {
+		err := stream.Send(&pb.Response{Message: "Hello " + request.Name})
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		time.Sleep(1 * time.Second)
+	}
 }
 
 func main() {
 	var (
-		listenAddr   = flag.String("listen-addr", "0.0.0.0:7900", "Listen address.")
+		debugAddr    = flag.String("debug-addr", "0.0.0.0:10001", "Debug listen address.")
+		listenAddr   = flag.String("listen-addr", "0.0.0.0:10000", "HTTP listen address.")
 		tlsCert      = flag.String("tls-cert", "/etc/helloworld/cert.pem", "TLS server certificate.")
 		tlsKey       = flag.String("tls-key", "/etc/helloworld/key.pem", "TLS server key.")
 		jwtPublicKey = flag.String("jwt-public-key", "/etc/helloworld/jwt.pem", "The JWT RSA public key.")
@@ -83,5 +102,16 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s.Serve(ln)
+	go s.Serve(ln)
+
+	trace.AuthRequest = func(req *http.Request) (any, sensitive bool) {
+		return true, true
+	}
+
+	http.HandleFunc("/healthz", healthzHandler)
+	http.HandleFunc("/readiness", readinessHandler)
+	http.HandleFunc("/statusmanager", statusHandler)
+
+	log.Println("Helloworld service started successfully.")
+	log.Fatal(http.ListenAndServe(*debugAddr, nil))
 }
