@@ -16,22 +16,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/metadata"
 )
-
-func validateToken(token string, publicKey *rsa.PublicKey) (*jwt.Token, error) {
-	jwtToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
-			log.Printf("Unexpected signing method: %v", t.Header["alg"])
-			return nil, fmt.Errorf("invalid token")
-		}
-		return publicKey, nil
-	})
-	if err == nil && jwtToken.Valid {
-		return jwtToken, nil
-	}
-	return nil, err
-}
 
 type server struct {
 	jwtPublicKey *rsa.PublicKey
@@ -52,23 +37,9 @@ func NewServer(rsaPublicKey string) (*server, error) {
 }
 
 func (s *server) SayHello(ctx context.Context, in *pb.Request) (*pb.Response, error) {
-	var (
-		token *jwt.Token
-		err   error
-	)
-
-	md, ok := metadata.FromContext(ctx)
-	if !ok {
-		return &pb.Response{}, grpc.Errorf(codes.Unauthenticated, "valid token required.")
-	}
-
-	jwtToken, ok := md["authorization"]
-	if !ok {
-		return nil, grpc.Errorf(codes.Unauthenticated, "valid token required.")
-	}
-
-	token, err = validateToken(jwtToken[0], s.jwtPublicKey)
+	token, err := validateTokenFromContext(ctx, s.jwtPublicKey)
 	if err != nil {
+		log.Println(err)
 		return &pb.Response{}, grpc.Errorf(codes.Unauthenticated, "valid token required.")
 	}
 
