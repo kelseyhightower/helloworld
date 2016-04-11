@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: "secure-server"
-          image: "kelseyhightower/secure-server:2.0.0"
+          image: "kelseyhightower/secure-server:1.0.0"
           volumeMounts:
             - name: "secure-server"
               mountPath: "/etc/helloworld"
