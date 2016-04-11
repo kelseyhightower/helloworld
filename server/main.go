@@ -16,11 +16,13 @@ func (s *server) SayHello(ctx context.Context, request *pb.Request) (*pb.Respons
 }
 
 func main() {
+	log.Println("Helloworld service starting...")
 	ln, err := net.Listen("tcp", ":10000")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterGreeterServer(s, &server{})
+    log.Println("Helloworld service started successfully.")
 	s.Serve(ln)
 }

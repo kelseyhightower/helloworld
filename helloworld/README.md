@@ -11,3 +11,9 @@ From this directory generate the go source using the protoc tool with the Go plu
 ```
 $ protoc --go_out=plugins=grpc:. helloworld.proto 
 ```
+
+### Add Streaming Support
+
+```
+rpc SayHelloStream (Request) returns (stream Response);
+```
