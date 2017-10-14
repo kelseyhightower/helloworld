@@ -46,8 +46,11 @@ func (s *server) SayHello(ctx context.Context, request *pb.Request) (*pb.Respons
 		return &pb.Response{}, grpc.Errorf(codes.Unauthenticated, "valid token required.")
 	}
 
+	// Access claims as a map type
+	claims := token.Claims.(jwt.MapClaims)
+
 	return &pb.Response{
-		Message: fmt.Sprintf("Hello %s (%s)", request.Name, token.Claims["email"]),
+		Message: fmt.Sprintf("Hello %s (%s)", request.Name, claims["email"]),
 	}, nil
 }
 
