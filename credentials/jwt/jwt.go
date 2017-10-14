@@ -15,7 +15,7 @@ type jwt struct {
 	token string
 }
 
-func NewFromTokenFile(token string) (credentials.Credentials, error) {
+func NewFromTokenFile(token string) (credentials.PerRPCCredentials, error) {
 	data, err := ioutil.ReadFile(token)
 	if err != nil {
 		return jwt{}, err

@@ -16,7 +16,7 @@ func validateTokenFromContext(ctx context.Context, publicKey *rsa.PublicKey) (*j
 		err   error
 	)
 
-	md, ok := metadata.FromContext(ctx)
+	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("invalid token")
 	}
