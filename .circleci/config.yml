@@ -21,6 +21,8 @@ jobs:
       - run: go get -v -t -d ./...
       - run: go test -v ./... -bench . -benchmem -cover 2>&1 | tee report.out
       - run: go-junit-report -set-exit-code < report.out > report.xml
+      - store_artifacts:
+          path: report.xml
       - store_test_results:
           path: report.xml
       - setup_remote_docker:
