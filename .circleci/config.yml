@@ -52,21 +52,24 @@ workflows:
   test:
     jobs:
       - test
-  test_pr:
+  test_and_build:
     jobs:
-      - test
-      - build:
-          requires: ["test"]
+      - test: &tb_filter
           filters:
             branches:
-              only: ["PR-*"]
-  master:
-    jobs:
-      - test
+              only: ["/PR-.*/"]
       - build:
-        requires: ["test"]
+          <<: *tb_filter
+          requires: ["test"]
+  test_build_deploy:
+    jobs:
+      - test: &tbd_filter
+          filters:
+            branches:
+              only: ["master"]
+      - build:
+          <<: *tbd_filter
+          requires: ["test"]
       - deploy:
-        requires: ["build"]
-        filters:
-          branches:
-            only: "master"
+          <<: *tbd_filter
+          requires: ["build"]
