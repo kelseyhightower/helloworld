@@ -8,11 +8,12 @@ jobs:
       - image: circleci/golang:1.8
     working_directory: &work_dir /go/src/github.com/jnbnyc/helloworld
     steps:
+      - checkout
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
-        name: container build
-        command: docker build .
+          name: container build
+          command: docker build .
       - run: docker images
 
   test:
@@ -49,17 +50,18 @@ jobs:
 
 workflows:
   version: 2
-  test:
-    jobs:
-      - test
+  # test:
+  #   jobs:
+  #     - test
   test_and_build:
     jobs:
-      - test: &tb_filter
-          filters:
-            branches:
-              only: ["/PR-.*/"]
+      - test
+      # &tb_filter
+          # filters:
+          #   branches:
+          #     only: ["/PR-.*/"] # would be nice if this worked
       - build:
-          <<: *tb_filter
+          # <<: *tb_filter
           requires: ["test"]
   test_build_deploy:
     jobs:
