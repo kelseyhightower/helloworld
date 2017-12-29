@@ -23,9 +23,8 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
-      - run: go test -v ./...
+      - run: go test -v ./... -bench . -benchmem -cover
       - setup_remote_docker:
           docker_layer_caching: true
       - run: docker build .
       - run: docker images
-      - run: env
