@@ -24,8 +24,8 @@ jobs:
       - run: go test -v ./... -bench . -benchmem -cover 2>&1 | tee ${TEST_RESULTS}/report.out
       - run: go-junit-report -set-exit-code < ${TEST_RESULTS}/report.out > ${TEST_RESULTS}/junit.xml
       - store_artifacts:
-          path: /tmp/test-results/junit.xml
-          destination: reports
+          path: ${TEST_RESULTS}/junit.xml
+          destination: reports/junit.xml
       - store_test_results:
           path: *test_results_dir
       - setup_remote_docker:
