@@ -24,7 +24,7 @@ jobs:
       - run: go test -v ./... -bench . -benchmem -cover 2>&1 | tee ${TEST_RESULTS}/report.out
       - run: go-junit-report -set-exit-code < ${TEST_RESULTS}/report.out > ${TEST_RESULTS}/junit.xml
       - store_artifacts:
-          path: ${TEST_RESULTS}/junit.xml
+          path: /tmp/test-results/junit.xml # would be nice to use yaml alias (*test_results_dir) or env var (${TEST_RESULTS}) here
           destination: reports/junit.xml
       - store_test_results:
           path: *test_results_dir
