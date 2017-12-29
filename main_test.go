@@ -3,6 +3,7 @@ package main
 // https://golang.org/pkg/net/http/httptest
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -51,9 +52,21 @@ func Test_helloWorld(t *testing.T) {
 	}
 }
 
-// func Test_getVersion(t *testing.T) {
+func Test_getVersion(t *testing.T) {
+	handler := http.HandlerFunc(getVersion)
 
-// }
+	req := httptest.NewRequest("GET", "/version", nil)
+	w := httptest.NewRecorder()
+	handler(w, req)
+
+	resp := w.Result()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	if success := fmt.Sprintf(`{"version": "%s"}`, version); string(body) != success {
+		t.Errorf("wrong response received, got %v want %v",
+			string(body), success)
+	}
+}
 
 func Benchmark_health(b *testing.B) {
 	req, err := http.NewRequest("GET", "/health", nil)
