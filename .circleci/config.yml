@@ -5,6 +5,18 @@ version: 2
 jobs:
   build:
     docker:
+      - image: circleci/golang:1.8
+    working_directory: &work_dir /go/src/github.com/jnbnyc/helloworld
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+        name: container build
+        command: docker build .
+      - run: docker images
+
+  test:
+    docker:
       # specify the version
       - image: circleci/golang:1.8
 
@@ -14,7 +26,7 @@ jobs:
       # - image: circleci/postgres:9.4
     environment:
       TEST_RESULTS: &test_results_dir /tmp/test-results
-    working_directory: /go/src/github.com/jnbnyc/helloworld
+    working_directory: *work_dir
     steps:
       - checkout
       - run: mkdir -p $TEST_RESULTS
@@ -28,7 +40,33 @@ jobs:
           destination: reports/junit.xml # filename is needed here
       - store_test_results:
           path: *test_results_dir
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run: docker build .
-      - run: docker images
+
+  deploy:
+    docker:
+      - image: busybox:latest
+    steps:
+      - run: echo faking it
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
+  test_pr:
+    jobs:
+      - test
+      - build:
+          requires: ["test"]
+          filters:
+            branches:
+              only: ["PR-*"]
+  master:
+    jobs:
+      - test
+      - build:
+        requires: ["test"]
+      - deploy:
+        requires: ["build"]
+        filters:
+          branches:
+            only: "master"
