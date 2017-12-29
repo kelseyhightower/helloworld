@@ -25,7 +25,7 @@ jobs:
       - run: go-junit-report -set-exit-code < ${TEST_RESULTS}/report.out > ${TEST_RESULTS}/junit.xml
       - store_artifacts:
           path: /tmp/test-results/junit.xml # would be nice to use yaml alias (*test_results_dir) or env var (${TEST_RESULTS}) here
-          destination: reports/
+          destination: reports/junit.xml # filename is needed here
       - store_test_results:
           path: *test_results_dir
       - setup_remote_docker:
