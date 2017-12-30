@@ -14,23 +14,17 @@ import (
 )
 
 const (
-	version = "v1.0.0"
+	version = "v1.0.1"
 )
 
 func main() {
 	log.Println("Starting helloworld application...")
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello world!\n")
-	})
+	http.HandleFunc("/", helloWorld)
 
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(200)
-	})
+	http.HandleFunc("/health", health)
 
-	http.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, version)
-	})
+	http.HandleFunc("/version", getVersion)
 
 	s := http.Server{Addr: ":80"}
 	go func() {
@@ -44,4 +38,18 @@ func main() {
 	log.Println("Shutdown signal received, exiting...")
 
 	s.Shutdown(context.Background())
+}
+
+func health(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+}
+
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, `{"message": "%s"}`, "Hello world!")
+}
+
+func getVersion(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, `{"version": "%s"}`, version)
 }
