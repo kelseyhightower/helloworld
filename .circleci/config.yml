@@ -1,3 +1,12 @@
+# would be nice if this worked
+# filters:
+#   tb_filter: &tb_filter
+#     branches:
+#       only: ["/PR-.*/"] # would be nice if this worked
+#   tbd_filter: &tbd_filter
+#     branches:
+#       only: ["master"]
+
 # Golang CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
@@ -50,28 +59,27 @@ jobs:
 
 workflows:
   version: 2
-  # test:
-  #   jobs:
-  #     - test
   test_and_build:
     jobs:
       - test
-      # &tb_filter
           # filters:
-          #   branches:
-          #     only: ["/PR-.*/"] # would be nice if this worked
+          #   <<: *tb_filter
       - build:
-          # <<: *tb_filter
+          # filters:
+          #   <<: *tb_filter
           requires: ["test"]
   test_build_deploy:
     jobs:
-      - test: &tbd_filter
-          filters:
+      - test:
+          filters: &tbd_filter
             branches:
               only: ["master"]
       - build:
-          <<: *tbd_filter
+          filters:
+            <<: *tbd_filter
           requires: ["test"]
       - deploy:
-          <<: *tbd_filter
+          context: org-global
+          filters:
+            <<: *tbd_filter
           requires: ["build"]
