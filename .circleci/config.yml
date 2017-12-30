@@ -10,6 +10,8 @@
 # Golang CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
+# Also check https://circleci.com/docs/2.0/configuration-reference/
+# https://circleci.com/docs/2.0/deployment_integrations/
 version: 2
 jobs:
   build:
@@ -69,7 +71,6 @@ workflows:
           context: &context org-global
           filters:
             <<: *tb_filter
-          requires: ["test"]
   test_build_deploy:
     jobs:
       - test:
@@ -80,9 +81,8 @@ workflows:
           context: &context org-global
           filters:
             <<: *tbd_filter
-          requires: ["test"]
       - deploy:
           context: *context
           filters:
             <<: *tbd_filter
-          requires: ["build"]
+          requires: ["build", "test"]
