@@ -53,18 +53,22 @@ jobs:
     docker:
       - image: busybox:latest
     steps:
-      - run: echo faking it
+      - run:
+          name: Deploy app
+          command: echo faking it
 
 workflows:
   version: 2
   test_and_build:
     jobs:
-      - test
-          # filters:
-          #   <<: *tb_filter
+      - test:
+          filters: &tb_filter
+            branches:
+              ignore: ["master"]
       - build:
-          # filters:
-          #   <<: *tb_filter
+          context: &context org-global
+          filters:
+            <<: *tb_filter
           requires: ["test"]
   test_build_deploy:
     jobs:
@@ -73,11 +77,12 @@ workflows:
             branches:
               only: ["master"]
       - build:
+          context: &context org-global
           filters:
             <<: *tbd_filter
           requires: ["test"]
       - deploy:
-          context: org-global
+          context: *context
           filters:
             <<: *tbd_filter
           requires: ["build"]
