@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# script/test: Run test suite for application. Optionally pass in a path to an
+#              individual test file to run a single test.
+
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+[ -z "$DEBUG" ] || set -x
+
+TEST_RESULTS=${TEST_RESULTS:-.}
+[ -d $TEST_RESULTS ] || mkdir -pv $TEST_RESULTS
+
+function test_app {
+  # TODO: docker-compose up -d [test_dependencies]
+  #   wait for dependencies to be available
+  # wait ...
+  docker-compose up test
+}
+
+echo "==> Running tests…"
+
+if [ "CI" == "true" ]; then
+  go get github.com/jstemmer/go-junit-report
+  test_app $@
+  go-junit-report -set-exit-code < ${TEST_RESULTS}/report.out > ${TEST_RESULTS}/junit.xml
+else
+  test_app $@
+fi
