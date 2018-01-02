@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# script/cibuild: Setup environment for CI. This is primarily
+#                 designed to run on the continuous integration server.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+echo "==> Building…"

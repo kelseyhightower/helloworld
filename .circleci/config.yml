@@ -1,0 +1,92 @@
+# would be nice if this worked
+# filters:
+#   tb_filter: &tb_filter
+#     branches:
+#       only: ["/PR-.*/"] # would be nice if this worked
+#   tbd_filter: &tbd_filter
+#     branches:
+#       only: ["master"]
+
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+# Also check https://circleci.com/docs/2.0/configuration-reference/
+# https://circleci.com/docs/2.0/deployment_integrations/
+version: 2
+jobs:
+  setup:
+    docker: &docker_image
+      - circleci/golang:1.8
+    working_directory: &work_dir /go/src/github.com/jnbnyc/helloworld
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - checkout
+      - run:
+          name: Setup Environment
+          command: script/setup
+
+  build:
+    docker:
+      <<: *docker_image
+    working_directory: *work_dir
+    steps:
+      - run:
+          name: Build Container
+          command: script/cibuild
+      - run: docker images
+  test:
+    docker:
+      <<: *docker_image
+    environment:
+      TEST_RESULTS: &test_results_dir /tmp/test-results
+    working_directory: *work_dir
+    steps:
+      - run:
+          name: Test
+          command: script/test
+      - store_artifacts:
+          path: /tmp/test-results/junit.xml # would be nice to use yaml alias (*test_results_dir) or env var (${TEST_RESULTS}) here
+          destination: reports/junit.xml # filename is needed here
+      - store_test_results:
+          path: *test_results_dir
+  deploy:
+    docker:
+      - image: busybox:latest
+    steps:
+      - run:
+          name: Deploy app
+          command: echo faking it
+
+workflows:
+  version: 2
+  master:
+    jobs:
+      - setup:
+          context: &context org-global
+          filters: &master_filter
+            branches:
+              ignore: ["master"]
+      - build:
+          context: *context
+          filters:
+            <<: *master_filter
+          requires: ["setup"]
+      - test:
+          context: *context
+          filters:
+            <<: *master_filter
+          requires: ["setup"]
+      # - push:
+      #     context: *context
+      #     filters:
+      #       <<: *master_filter
+      #     requires: ["build","test"]
+      - deploy:
+          context: *context
+          filters:
+            <<: *master_filter
+          filters:
+            <<: *tbd_filter
+          # requires: ["push"]
+          requires: ["build","test"]
