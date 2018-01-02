@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# script/setup: Set up application for the first time after cloning, or set it
+#               back to the initial first unused state.
+
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [ "$CI" != "true" ]; then
+  script/bootstrap
+fi
+
+# TODO: do this programmatically using the definition already provided
+# in docker-compose.yml
+ENV_FILES="$(echo .env{,.test})"
+NETWORKS="alternate"
+VOLUMES="$(echo helloworld_{cache,pgdata})"
+
+for envfile in $(echo $ENV_FILES); do
+  touch $envfile
+done
+
+for network in $(echo $NETWORKS); do
+  docker-compose network create $network || true
+done
+
+for volume in $(echo $VOLUMES); do
+  docker-compose volume create $volume || true
+done
