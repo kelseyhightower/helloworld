@@ -19,7 +19,7 @@ const (
 
 func main() {
 	log.Println("Starting helloworld application...")
-
+          // Just checking it out
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello universe!\n")
 	})
