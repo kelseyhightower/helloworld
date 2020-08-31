@@ -25,4 +25,4 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: chromeriver/hello
-        tags: ${{ BRANCH_NAME}}
+        tags: $BRANCH_NAME
