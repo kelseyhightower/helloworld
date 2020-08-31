@@ -1,4 +1,4 @@
-name: Go
+name: Build
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
 
     - name: Extract branch name
       shell: bash
-      run: echo "::set-env name=BRANCH_NAME_TMP::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" && echo "::set-env name=BRANCH_NAME::${BRANCH_NAME_TMP,,}"
+      run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | awk '{print tolower($0)}' | tr -cd '[:alnum:]-._'
     - name: Test
       run: echo "${BRANCH_NAME}"
 
