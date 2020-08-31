@@ -17,9 +17,9 @@ jobs:
 
     - name: Extract branch name
       shell: bash
-      run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+      run: echo "::set-env name=BRANCH_NAME_TMP::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" && echo "::set-env name=BRANCH_NAME::${BRANCH_NAME_TMP,,}"
     - name: Test
-      run: echo "${BRANCH_NAME,,}"
+      run: echo "${BRANCH_NAME}"
 
     - name: Build and push Docker images
       uses: docker/build-push-action@v1
