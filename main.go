@@ -22,6 +22,18 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello universe!\n")
+	        response, err := http.Get("http://person.pool/info")
+
+        	if err != nil {
+            		fmt.Print(err.Error())
+            		os.Exit(1)
+        	}
+
+        	responseData, err := ioutil.ReadAll(response.Body)
+        	if err != nil {
+            		log.Fatal(err)
+        	}
+        	fmt.Fprintf(w, string(responseData))
 	})
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
