@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+        "io/ioutil"
 )
 
 const (
