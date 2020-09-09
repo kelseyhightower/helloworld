@@ -6,6 +6,7 @@ on:
 jobs:
   new-branch:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Test new-branch
-        run: echo "Name: $GITHUB_BASE_REF"
+    - name: Hello, World in GitHub Actions
+      run: echo "Hello, World: $GITHUB_BASE_REF"
