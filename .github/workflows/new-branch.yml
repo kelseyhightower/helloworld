@@ -9,4 +9,4 @@ jobs:
 
     steps:
     - name: Hello, World in GitHub Actions
-      run: echo "Hello, World: $GITHUB_BASE_REF"
+      run: echo "Hello, World: $GITHUB_REF"
