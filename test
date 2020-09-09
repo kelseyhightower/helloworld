@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJkb2NrZXIuaW8iOnsidXNlcm5hbWUiOiJjcmJhbWJvbyIsInBhc3N3b3JkIjoiZFRGaWEyODVOR05UTkVKWk9tTnlZbUZ0WW05diIsImVtYWlsIjoiZG9ja2VyQGNocm9tZXJpdmVyLmNvbSIsImF1dGgiOiJZM0ppWVcxaWIyODZkVEZpYTI4NU5HTlRORUpaIn19fQ==
+kind: Secret
+metadata:
+  annotations:
+    chromeriver.com/cluster: c4
+    chromeriver.com/env: dev
+    chromeriver.com/region: us-east-1
+  name: cr-private-registry
+  namespace: test-branch
+type: kubernetes.io/dockerconfigjson

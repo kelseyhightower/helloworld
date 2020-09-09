@@ -1,0 +1,18 @@
+apiVersion: gateway.solo.io/v1
+kind: VirtualService
+metadata:
+  name: hello
+  namespace: gloo-system
+spec:
+  displayName: hello
+  virtualHost:
+    domains:
+    - hello.test-branch.pool.c4-dev.chromeriver.com
+    routes:
+    - matchers:
+      - prefix: /
+      routeAction:
+        single:
+          upstream:
+            name: test-branch-hello-80
+            namespace: gloo-system
