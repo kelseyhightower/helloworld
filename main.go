@@ -32,7 +32,7 @@ func main() {
 		fmt.Fprintf(w, version)
 	})
 
-	s := http.Server{Addr: ":80"}
+	s := http.Server{Addr: ":8080"}
 	go func() {
 		log.Fatal(s.ListenAndServe())
 	}()
